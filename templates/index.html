@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamVibe - Filmy i Seriale Online</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================================================
+           1. ZMIENNE I STYLE PODSTAWOWE
+           ========================================================================== */
+        :root {
+            --primary: #e50914;
+            --primary-hover: #ff1e27;
+            --bg-main: #0b0b0e;
+            --bg-card: #16161c;
+            --bg-glass: rgba(22, 22, 28, 0.75);
+            --text-main: #ffffff;
+            --text-muted: #a0a0ab;
+            --accent-yellow: #ffc107;
+            --accent-blue: #00d2ff;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); }
+        ::-webkit-scrollbar-thumb { background: #2a2a35; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* ==========================================================================
+           2. NAWIGACJA (NAVBAR)
+           ========================================================================== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 4%;
+            background: linear-gradient(180deg, rgba(11,11,14,0.95) 0%, rgba(11,11,14,0) 100%);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .navbar.scrolled {
+            background: rgba(11, 11, 14, 0.95);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 4%;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-brand span { color: #fff; }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 5px;
+            border-radius: 30px;
+            border: 1px solid var(--border-color);
+        }
+
+        .nav-tab {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-tab:hover { color: var(--text-main); }
+        .nav-tab.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
+        }
+
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid var(--border-color);
+            padding: 10px 18px 10px 42px;
+            border-radius: 25px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            width: 220px;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            width: 300px;
+            border-color: var(--primary);
+            background: rgba(0,0,0,0.6);
+            box-shadow: 0 0 15px rgba(229, 9, 20, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            font-size: 14px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        /* ==========================================================================
+           3. HERO BANNER (GŁÓWNY WYRÓŻNIONY TYTUŁ)
+           ========================================================================== */
+        .hero {
+            position: relative;
+            width: 100%;
+            height: 70vh;
+            min-height: 480px;
+            display: flex;
+            align-items: flex-end;
+            padding: 0 4% 60px 4%;
+            background-size: cover;
+            background-position: center top;
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(0deg, var(--bg-main) 0%, rgba(11,11,14,0.6) 50%, rgba(11,11,14,0.8) 100%),
+                        linear-gradient(90deg, var(--bg-main) 0%, rgba(11,11,14,0.2) 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            max-width: 650px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(229, 9, 20, 0.2);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .hero-title {
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .hero-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .hero-meta .rating { color: var(--accent-yellow); font-weight: 700; }
+
+        .hero-desc {
+            font-size: 15px;
+            color: #d1d1d6;
+            margin-bottom: 25px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* ==========================================================================
+           4. PRZYCISKI I AKCJE
+           ========================================================================== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 26px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(229, 9, 20, 0.4);
+        }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(229, 9, 20, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.22);
+            transform: translateY(-2px);
+        }
+
+        /* ==========================================================================
+           5. SEKCJA LOSOWANIA I FILTRY GATUNKÓW
+           ========================================================================== */
+        .section-wrapper {
+            padding: 30px 4%;
+        }
+
+        .randomizer-card {
+            background: linear-gradient(135deg, rgba(30,30,40,0.6) 0%, rgba(15,15,20,0.8) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 25px 35px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .randomizer-info h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        .randomizer-info p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .genre-pills {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        .genre-pill {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .genre-pill:hover, .genre-pill.active {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+
+        /* ==========================================================================
+           6. SIATKA KART (KATALOG) I POZIOME PASKI
+           ========================================================================== */
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 22px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 22px;
+            margin-bottom: 40px;
+        }
+
+        /* Horizontal Carousel Roll */
+        .carousel-container {
+            display: flex;
+            gap: 18px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+            scroll-behavior: smooth;
+        }
+
+        .card {
+            position: relative;
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+            flex: 0 0 180px; /* Dla karuzeli */
+        }
+
+        .grid .card { flex: unset; } /* Dla siatki */
+
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.8);
+            border-color: rgba(255,255,255,0.2);
+            z-index: 10;
+        }
+
+        .card-img-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 150%; /* Proporcje plakatów 2:3 */
+            background: #1a1a22;
+            overflow: hidden;
+        }
+
+        .card-img {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .card:hover .card-img {
+            transform: scale(1.08);
+        }
+
+        .card-type-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(5px);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-content {
+            padding: 12px;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 6px;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .rating-badge {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--accent-yellow);
+            font-weight: 700;
+        }
+
+        /* ==========================================================================
+           7. PAGINACJA (PASEK STRON)
+           ========================================================================== */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            margin-bottom: 50px;
+        }
+
+        .page-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* ==========================================================================
+           8. MODAL (SZCZEGÓŁY FILMU / SERIALU)
+           ========================================================================== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-container {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 850px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+            animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        .modal-close:hover { background: var(--primary); }
+
+        .modal-header {
+            position: relative;
+            height: 320px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .modal-header-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(0deg, var(--bg-main) 0%, rgba(11,11,14,0.3) 100%);
+        }
+
+        .modal-body {
+            padding: 25px 35px 35px 35px;
+            margin-top: -50px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .modal-badges {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .badge-item {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid var(--border-color);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #ddd;
+        }
+
+        .badge-season {
+            background: rgba(0, 210, 255, 0.15);
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .modal-desc {
+            font-size: 15px;
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .cast-section h4, .gallery-section h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: var(--text-muted);
+        }
+
+        .cast-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+
+        .cast-pill {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            color: #eee;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 85px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+        .gallery-img:hover { transform: scale(1.05); }
+
+        /* ==========================================================================
+           9. ANIMACJE I RESPONSYWNOŚĆ
+           ========================================================================== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleUp {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 15px 5%; }
+            .nav-menu { display: none; } /* Przełączanie w hero na mobilkach */
+            .search-input { width: 140px; }
+            .search-input:focus { width: 180px; }
+            .hero-title { font-size: 28px; }
+            .randomizer-card { flex-direction: column; text-align: center; gap: 15px; }
+            .grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+            .card-content { padding: 8px; }
+            .card-title { font-size: 12px; }
+            .modal-body { padding: 20px; }
+            .modal-title { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV BAR -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="nav-brand" onclick="resetToHome()">
+            <span>Stream</span>Vibe
+        </a>
+
+        <div class="nav-menu">
+            <button class="nav-tab active" id="tab-movie" onclick="switchType('movie')">🎬 Filmy</button>
+            <button class="nav-tab" id="tab-tv" onclick="switchType('tv')">📺 Seriale</button>
+        </div>
+
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" class="search-input" placeholder="Szukaj filmów lub seriali..." onkeyup="handleSearch(event)">
+        </div>
+    </nav>
+
+    <!-- HERO BANNER -->
+    <header class="hero" id="heroBanner">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-badge" id="heroBadge">🔥 DZIŚ POLECAMY</div>
+            <h1 class="hero-title" id="heroTitle">Ładowanie hitu...</h1>
+            <div class="hero-meta">
+                <span class="rating" id="heroRating">⭐ --</span>
+                <span id="heroYear">----</span>
+                <span id="heroType">FILM</span>
+            </div>
+            <p class="hero-desc" id="heroDesc">Proszę czekać, pobieramy najciekawsze produkcje z bazy TMDB...</p>
+            <div class="hero-btns">
+                <button class="btn btn-primary" id="heroBtnDetails" onclick="">ℹ️ Więcej o tym tytule</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- SEKCJA GŁÓWNA -->
+    <main class="section-wrapper">
+
+        <!-- KARTA LOSOWANIA -->
+        <section class="randomizer-card">
+            <div class="randomizer-info">
+                <h3>🎲 Nie wiesz, co obejrzeć?</h3>
+                <p>Wygeneruj losowy tytuł na dzisiejszy wieczór jednym kliknięciem!</p>
+            </div>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <button class="btn btn-secondary" onclick="losuj('movie')">🎬 Losuj Film</button>
+                <button class="btn btn-secondary" onclick="losuj('tv')">📺 Losuj Serial</button>
+            </div>
+        </section>
+
+        <!-- SEKCJA REKOMENDACJI (PASEK POZIOMY) -->
+        <section id="recommendationsWrapper">
+            <h2 class="section-title">📺 Hity Serialowe, Które Musisz Znać</h2>
+            <div class="carousel-container" id="carouselPopularSeries">
+                <!-- JS doda karty -->
+            </div>
+
+            <h2 class="section-title">💥 Wybuchowe Kina Akcji</h2>
+            <div class="carousel-container" id="carouselActionHits">
+                <!-- JS doda karty -->
+            </div>
+        </section>
+
+        <!-- FILTRY GATUNKÓW -->
+        <section>
+            <h2 class="section-title" id="catalogSectionTitle">Przeglądaj Katalog</h2>
+            <div class="genre-pills" id="genrePills">
+                <button class="genre-pill active" onclick="filterGenre('wszystkie', this)">Wszystkie</button>
+                <button class="genre-pill" onclick="filterGenre('akcja', this)">Akcja</button>
+                <button class="genre-pill" onclick="filterGenre('komedia', this)">Komedia</button>
+                <button class="genre-pill" onclick="filterGenre('kryminal', this)">Kryminał</button>
+                <button class="genre-pill" onclick="filterGenre('dramat', this)">Dramat</button>
+                <button class="genre-pill" onclick="filterGenre('sci-fi', this)">Sci-Fi</button>
+                <button class="genre-pill" onclick="filterGenre('horror', this)">Horror</button>
+                <button class="genre-pill" onclick="filterGenre('animacja', this)">Animacja</button>
+                <button class="genre-pill" onclick="filterGenre('romans', this)">Romans</button>
+            </div>
+        </section>
+
+        <!-- SIATKA GLÓWNA (GRID) -->
+        <section>
+            <div class="grid" id="catalogGrid">
+                <!-- JS wygeneruje karty -->
+            </div>
+
+            <!-- PAGINACJA -->
+            <div class="pagination" id="pagination">
+                <button class="page-btn" id="prevPageBtn" onclick="changePage(-1)">← Poprzednia</button>
+                <span class="page-info" id="pageInfo">Strona 1 z 1</span>
+                <button class="page-btn" id="nextPageBtn" onclick="changePage(1)">Następna →</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL (POP-UP ZE SZCZEGÓŁAMI) -->
+    <div class="modal-overlay" id="detailModal" onclick="closeModalOnOverlay(event)">
+        <div class="modal-container">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            
+            <div class="modal-header" id="modalBackdrop">
+                <div class="modal-header-overlay"></div>
+            </div>
+
+            <div class="modal-body">
+                <h2 class="modal-title" id="modalTitle">Tytuł produkcji</h2>
+                
+                <div class="modal-badges">
+                    <span class="badge-item" style="color: var(--accent-yellow);" id="modalRating">⭐ 0.0</span>
+                    <span class="badge-item" id="modalYear">----</span>
+                    <span class="badge-item" id="modalTypeBadge">FILM</span>
+                    <span class="badge-item badge-season" id="modalSeasons" style="display: none;">0 Sezonów</span>
+                </div>
+
+                <p class="modal-desc" id="modalDesc">Opis filmu lub serialu...</p>
+
+                <div class="cast-section">
+                    <h4>Główna Obsada</h4>
+                    <div class="cast-pills" id="modalCast">
+                        <!-- Tagi aktorów -->
+                    </div>
+                </div>
+
+                <div class="gallery-section" id="gallerySection">
+                    <h4>Kadry i Zdjęcia</h4>
+                    <div class="gallery-grid" id="modalGallery">
+                        <!-- Miniaturki zdjęć -->
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px;">
+                    <a href="#" target="_blank" class="btn btn-primary" id="modalTrailerBtn" style="display: none;">
+                        ▶ Oglądaj Zwiastun w YouTube
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT (LOGIKA FRONTENDOWA) -->
+    <script>
+        // ==========================================
+        // STAN APLIKACJI
+        // ==========================================
+        let currentType = 'movie';     // 'movie' lub 'tv'
+        let currentGenre = 'wszystkie'; // wybrane gatunki
+        let currentPage = 1;           // strona katalogu
+        let totalPages = 1;            // łączna liczba stron z API
+        let currentSearchQuery = '';   // wpisana fraza
+
+        // ==========================================
+        // INICJALIZACJA STRONY
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            initNavbarScroll();
+            loadCatalog();
+            loadRecommendations();
+        });
+
+        // Efekt przezroczystości Navbara przy przewijaniu
+        function initNavbarScroll() {
+            window.addEventListener('scroll', () => {
+                const navbar = document.getElementById('navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+        }
+
+        // ==========================================
+        // PRZEŁĄCZANIE TRYBU (FILMY / SERIALE)
+        // ==========================================
+        function switchType(type) {
+            currentType = type;
+            currentPage = 1;
+            currentSearchQuery = '';
+            document.getElementById('searchInput').value = '';
+
+            // Aktualizacja zakładki
+            document.getElementById('tab-movie').classList.toggle('active', type === 'movie');
+            document.getElementById('tab-tv').classList.toggle('active', type === 'tv');
+
+            // Aktualizacja nagłówków
+            const titleText = type === 'movie' ? "Najpopularniejsze Filmy" : "Najpopularniejsze Seriale";
+            document.getElementById('catalogSectionTitle').innerText = titleText;
+
+            loadCatalog();
+        }
+
+        function resetToHome() {
+            switchType('movie');
+        }
+
+        // ==========================================
+        // OBSŁUGA KATALOGU I WYSZUKIWARKI
+        // ==========================================
+        function handleSearch(event) {
+            if (event.key === 'Enter') {
+                currentSearchQuery = event.target.value.trim();
+                currentPage = 1;
+                loadCatalog();
+            }
+        }
+
+        function filterGenre(genre, element) {
+            currentGenre = genre;
+            currentPage = 1;
+
+            // Zmiana aktywnej pigułki
+            document.querySelectorAll('.genre-pill').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+
+            loadCatalog();
+        }
+
+        async function loadCatalog() {
+            const grid = document.getElementById('catalogGrid');
+            grid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1;">Ładowanie treści...</p>';
+
+            let url = `/api/katalog?typ=${currentType}&page=${currentPage}&gatunek=${currentGenre}`;
+            if (currentSearchQuery) {
+                url += `&szukaj=${encodeURIComponent(currentSearchQuery)}`;
+            }
+
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+
+                totalPages = data.total_pages || 1;
+                grid.innerHTML = '';
+
+                if (!data.results || data.results.length === 0) {
+                    grid.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1;">Brak wyników spełniających kryteria.</p>';
+                    updatePaginationUI();
+                    return;
+                }
+
+                // Generowanie kart
+                data.results.forEach((item, index) => {
+                    const card = createCardElement(item);
+                    grid.appendChild(card);
+
+                    // Jeśli to pierwsza strona bez wyszukiwania, ustaw pierwszy plakat w Hero
+                    if (index === 0 && currentPage === 1 && !currentSearchQuery) {
+                        setHeroBanner(item);
+                    }
+                });
+
+                updatePaginationUI();
+
+            } catch (err) {
+                console.error("Błąd ładowania katalogu:", err);
+                grid.innerHTML = '<p style="color: red; grid-column: 1/-1;">Wystąpił błąd podczas połączenia z serwerem.</p>';
+            }
+        }
+
+        // ==========================================
+        // KREOWANIE KART (FILM / SERIAL)
+        // ==========================================
+        function createCardElement(item) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.onclick = () => openDetails(item.id, item.typ || currentType);
+
+            const badgeText = (item.typ === 'tv' || currentType === 'tv') ? 'SERIAL' : 'FILM';
+            const posterImg = item.plakat || 'https://via.placeholder.com/500x750?text=Brak+Okładki';
+
+            card.innerHTML = `
+                <div class="card-img-wrapper">
+                    <img class="card-img" src="${posterImg}" alt="${item.tytul}" loading="lazy">
+                    <span class="card-type-tag">${badgeText}</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-title">${item.tytul}</div>
+                    <div class="card-meta">
+                        <span>${item.rok}</span>
+                        <span class="rating-badge">⭐ ${item.ocena}</span>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        // ==========================================
+        // POZIOME PASKI REKOMENDACJI
+        // ==========================================
+        async function loadRecommendations() {
+            try {
+                const res = await fetch('/api/rekomendacje');
+                const data = await res.json();
+
+                renderCarousel('carouselPopularSeries', data.popular_series, 'tv');
+                renderCarousel('carouselActionHits', data.action_hits, 'movie');
+            } catch (err) {
+                console.error("Błąd rekomendacji:", err);
+            }
+        }
+
+        function renderCarousel(elementId, items, forceType) {
+            const container = document.getElementById(elementId);
+            if (!container || !items) return;
+
+            container.innerHTML = '';
+            items.forEach(item => {
+                item.typ = forceType; // Nakładamy typ
+                const card = createCardElement(item);
+                container.appendChild(card);
+            });
+        }
+
+        // Ustawianie wyróżnionego Baneru Hero
+        function setHeroBanner(item) {
+            const hero = document.getElementById('heroBanner');
+            const bgImg = item.tlo || item.plakat;
+            if (bgImg) hero.style.backgroundImage = `url('${bgImg}')`;
+
+            document.getElementById('heroTitle').innerText = item.tytul;
+            document.getElementById('heroRating').innerText = `⭐ ${item.ocena}`;
+            document.getElementById('heroYear').innerText = item.rok;
+            document.getElementById('heroType').innerText = currentType === 'tv' ? 'SERIAL' : 'FILM';
+            document.getElementById('heroDesc').innerText = item.opis;
+            document.getElementById('heroBtnDetails').onclick = () => openDetails(item.id, currentType);
+        }
+
+        // ==========================================
+        // PAGINACJA
+        // ==========================================
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                loadCatalog();
+                window.scrollTo({ top: 450, behavior: 'smooth' });
+            }
+        }
+
+        function updatePaginationUI() {
+            document.getElementById('pageInfo').innerText = `Strona ${currentPage} z ${totalPages}`;
+            document.getElementById('prevPageBtn').disabled = (currentPage <= 1);
+            document.getElementById('nextPageBtn').disabled = (currentPage >= totalPages);
+        }
+
+        // ==========================================
+        // LOSOWANIE
+        // ==========================================
+        async function losuj(type) {
+            try {
+                const res = await fetch(`/api/losowy?typ=${type}`);
+                const data = await res.json();
+
+                if (data.id) {
+                    openDetails(data.id, data.typ || type);
+                } else {
+                    alert("Nie udało się wylosować tytułu. Spróbuj ponownie.");
+                }
+            } catch (err) {
+                alert("Błąd połączenia podczas losowania.");
+            }
+        }
+
+        // ==========================================
+        // MODAL DETALI (SZCZEGÓŁY FILMU / SERIALU)
+        // ==========================================
+        async function openDetails(id, type) {
+            const modal = document.getElementById('detailModal');
+            modal.classList.add('active');
+
+            // Reset stanu modala
+            document.getElementById('modalTitle').innerText = "Ładowanie danych...";
+            document.getElementById('modalDesc').innerText = "";
+            document.getElementById('modalCast').innerHTML = "";
+            document.getElementById('modalGallery').innerHTML = "";
+            document.getElementById('modalBackdrop').style.backgroundImage = "";
+            document.getElementById('modalSeasons').style.display = "none";
+            document.getElementById('modalTrailerBtn').style.display = "none";
+
+            try {
+                const res = await fetch(`/api/detale/${type}/${id}`);
+                const data = await res.json();
+
+                if (data.error) {
+                    document.getElementById('modalTitle').innerText = "Błąd pobierania danych.";
+                    return;
+                }
+
+                // Wypełnianie danych
+                document.getElementById('modalTitle').innerText = data.tytul;
+                document.getElementById('modalRating').innerText = `⭐ ${data.ocena}`;
+                document.getElementById('modalYear').innerText = data.rok;
+                document.getElementById('modalDesc').innerText = data.opis;
+                document.getElementById('modalTypeBadge').innerText = (type === 'tv') ? 'SERIAL' : 'FILM';
+
+                // Liczba sezonów dla serialu
+                if (type === 'tv' && data.liczba_sezonow) {
+                    const seasonsBadge = document.getElementById('modalSeasons');
+                    seasonsBadge.innerText = `${data.liczba_sezonow} Sezon(ów)`;
+                    seasonsBadge.style.display = "inline-block";
+                }
+
+                // Tło modala
+                if (data.zdjecia && data.zdjecia.length > 0) {
+                    document.getElementById('modalBackdrop').style.backgroundImage = `url('${data.zdjecia[0]}')`;
+                }
+
+                // Obsada
+                const castContainer = document.getElementById('modalCast');
+                if (data.obsada && data.obsada !== "Brak danych o obsadzie") {
+                    const actors = data.obsada.split(',');
+                    actors.forEach(actor => {
+                        const pill = document.createElement('span');
+                        pill.className = 'cast-pill';
+                        pill.innerText = actor.trim();
+                        castContainer.appendChild(pill);
+                    });
+                } else {
+                    castContainer.innerHTML = '<span style="color: var(--text-muted); font-size: 13px;">Brak danych o obsadzie.</span>';
+                }
+
+                // Galeria kadrów
+                const galleryContainer = document.getElementById('modalGallery');
+                if (data.zdjecia && data.zdjecia.length > 1) {
+                    data.zdjecia.slice(1, 5).forEach(imgUrl => {
+                        const img = document.createElement('img');
+                        img.className = 'gallery-img';
+                        img.src = imgUrl;
+                        galleryContainer.appendChild(img);
+                    });
+                } else {
+                    document.getElementById('gallerySection').style.display = 'none';
+                }
+
+                // Zwiastun
+                if (data.trailer_key) {
+                    const trailerBtn = document.getElementById('modalTrailerBtn');
+                    trailerBtn.href = `https://www.youtube.com/watch?v=${data.trailer_key}`;
+                    trailerBtn.style.display = "inline-flex";
+                }
+
+            } catch (err) {
+                console.error("Błąd podczas pobierania detali:", err);
+                document.getElementById('modalTitle').innerText = "Wystąpił błąd.";
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        function closeModalOnOverlay(event) {
+            if (event.target.id === 'detailModal') {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
