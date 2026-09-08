@@ -3,681 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamFlix — Twój Świat Rozrywki</title>
-    <!-- Font Awesome do ikon -->
+    <title>StreamFlix — Baza i Wyszukiwarka Filmowa</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ==========================================================================
-           1. ZMIENNE I RESET CSS
-           ========================================================================== */
         :root {
-            --primary-color: #E50914;
-            --primary-hover: #ff0f1a;
-            --bg-dark: #141414;
-            --card-bg: #1f1f1f;
+            --primary: #E50914;
+            --bg-dark: #121212;
+            --card-bg: #1e1e1e;
             --text-main: #ffffff;
             --text-muted: #aaaaaa;
-            --font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            --transition-smooth: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: var(--font-family);
-            -webkit-font-smoothing: antialiased;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            overflow-x: hidden;
-            width: 100vw;
-            min-height: 100vh;
-        }
-
-        /* Pasek przewijania */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #000;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-color);
-        }
-
-        /* ==========================================================================
-           2. EKRAN POWITALNY (LANDING PAGE)
-           ========================================================================== */
+        /* EKRAN STARTOWY */
         #welcome-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0.85) 0%, rgba(20, 20, 20, 0.95) 100%),
-                        url('https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?q=80&w=1920') no-repeat center center/cover;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            z-index: 1000;
-            padding: 20px;
-            transition: opacity 1s ease-in-out, visibility 1s ease-in-out, transform 1s ease-in-out;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(18,18,18,0.95)),
+                        url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1920') center/cover;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; z-index: 1000; padding: 20px;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
         }
-
-        #welcome-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-            transform: scale(1.05);
-            pointer-events: none;
+        #welcome-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .welcome-title { font-size: 4rem; color: var(--primary); font-weight: 900; letter-spacing: 3px; margin-bottom: 10px; }
+        .welcome-desc { font-size: 1.2rem; color: var(--text-muted); max-width: 600px; margin-bottom: 30px; }
+        
+        .btn-enter {
+            padding: 16px 40px; font-size: 1.1rem; font-weight: bold; color: #fff;
+            background: var(--primary); border: none; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 0 25px rgba(229, 9, 20, 0.6); transition: all 0.3s ease;
+            display: flex; align-items: center; gap: 10px;
         }
+        .btn-enter:hover { transform: scale(1.05); background: #ff0f1a; box-shadow: 0 0 35px rgba(229, 9, 20, 0.9); }
 
-        .brand-badge {
-            background: rgba(229, 9, 20, 0.2);
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            animation: pulse-badge 2s infinite;
-        }
-
-        @keyframes pulse-badge {
-            0% { box-shadow: 0 0 0 0 rgba(229, 9, 20, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(229, 9, 20, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(229, 9, 20, 0); }
-        }
-
-        .welcome-title {
-            font-size: 4.5rem;
-            font-weight: 900;
-            color: var(--primary-color);
-            letter-spacing: 4px;
-            margin-bottom: 15px;
-            text-shadow: 0 0 30px rgba(229, 9, 20, 0.7);
-        }
-
-        .welcome-subtitle {
-            font-size: 1.6rem;
-            color: #ffffff;
-            max-width: 700px;
-            margin-bottom: 10px;
-            font-weight: 400;
-        }
-
-        .welcome-desc {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            max-width: 550px;
-            margin-bottom: 40px;
-            font-weight: 300;
-        }
-
-        /* Dedykowany Przycisk Wejścia */
-        .btn-portal {
-            position: relative;
-            padding: 20px 55px;
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: #ffffff;
-            background: var(--primary-color);
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 0 30px rgba(229, 9, 20, 0.8);
-            transition: var(--transition-smooth);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .btn-portal:hover {
-            transform: scale(1.08);
-            background: var(--primary-hover);
-            box-shadow: 0 0 50px rgba(229, 9, 20, 1);
-        }
-
-        .btn-portal:active {
-            transform: scale(0.97);
-        }
-
-        /* ==========================================================================
-           3. NAWIGACJA (HEADER)
-           ========================================================================== */
+        /* NAWIGACJA */
         header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 18px 60px;
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0) 100%);
-            z-index: 500;
-            transition: background 0.3s ease;
+            position: sticky; top: 0; z-index: 500; background: #181818;
+            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #282828;
         }
+        .logo { color: var(--primary); font-size: 26px; font-weight: 900; text-decoration: none; }
+        
+        .search-bar { display: flex; align-items: center; background: #252525; border-radius: 20px; padding: 5px 15px; width: 300px; }
+        .search-bar input { background: transparent; border: none; outline: none; color: #fff; width: 100%; padding: 5px; }
+        .search-bar i { color: var(--text-muted); }
 
-        header.scrolled {
-            background-color: #141414;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
-        }
-
-        .nav-left {
-            display: flex;
-            align-items: center;
-            gap: 40px;
-        }
-
-        .logo {
-            color: var(--primary-color);
-            font-size: 30px;
-            font-weight: 900;
-            text-decoration: none;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(229, 9, 20, 0.5);
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 20px;
-        }
-
-        .nav-links a {
-            color: #e5e5e5;
-            text-decoration: none;
-            font-size: 0.95rem;
-            transition: color 0.2s;
-        }
-
-        .nav-links a:hover, .nav-links a.active {
-            color: #ffffff;
-            font-weight: bold;
-        }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 25px;
-        }
-
-        .search-box {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .search-box input {
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid #444;
-            padding: 8px 15px 8px 38px;
-            border-radius: 20px;
-            color: #fff;
-            font-size: 0.9rem;
-            outline: none;
-            transition: var(--transition-smooth);
-            width: 180px;
-        }
-
-        .search-box input:focus {
-            width: 260px;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 10px rgba(229, 9, 20, 0.4);
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 12px;
-            color: #aaa;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 6px;
-            background: url('https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100') no-repeat center/cover;
-            border: 2px solid transparent;
-            transition: border 0.2s;
-        }
-
-        .user-profile:hover .avatar {
-            border-color: var(--primary-color);
-        }
-
-        /* ==========================================================================
-           4. GLÓWNY BANER (HERO SECTION)
-           ========================================================================== */
-        .hero {
-            position: relative;
-            height: 80vh;
-            background: linear-gradient(180deg, rgba(20, 20, 20, 0.2) 0%, rgba(20, 20, 20, 1) 100%),
-                        url('https://images.unsplash.com/photo-1616530940355-351fabd9524b?q=80&w=1920') no-repeat center center/cover;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 0 60px;
-            margin-bottom: -50px;
-        }
-
-        .hero-content {
-            max-width: 650px;
-            margin-top: 60px;
-        }
-
-        .hero-tag {
-            color: #46d369;
-            font-weight: bold;
-            font-size: 0.95rem;
-            margin-bottom: 10px;
-            display: inline-block;
-        }
-
-        .hero-title {
-            font-size: 3.8rem;
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 15px;
-            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
-        }
-
-        .hero-desc {
-            font-size: 1.1rem;
-            color: #dddddd;
-            line-height: 1.5;
-            margin-bottom: 25px;
-            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 15px;
-        }
-
+        /* OPCIe I GATUNKI */
+        .controls-section { padding: 30px 40px 10px; display: flex; flex-direction: column; gap: 20px; }
+        .action-buttons { display: flex; gap: 15px; flex-wrap: wrap; }
+        
         .btn-action {
-            padding: 12px 28px;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: var(--transition-smooth);
+            padding: 10px 20px; background: #282828; color: #fff; border: 1px solid #3a3a3a;
+            border-radius: 8px; cursor: pointer; font-size: 0.95rem; font-weight: 600;
+            display: flex; align-items: center; gap: 8px; transition: all 0.2s ease;
         }
+        .btn-action:hover, .btn-action.active { background: var(--primary); border-color: var(--primary); }
 
-        .btn-play {
-            background-color: #ffffff;
-            color: #000000;
+        .genre-tags { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
+        .genre-tag {
+            padding: 6px 16px; background: #222; border-radius: 15px; font-size: 0.85rem;
+            color: var(--text-muted); cursor: pointer; white-space: nowrap; transition: 0.2s;
         }
+        .genre-tag:hover, .genre-tag.active { background: #fff; color: #000; font-weight: bold; }
 
-        .btn-play:hover {
-            background-color: rgba(255, 255, 255, 0.85);
-            transform: scale(1.03);
-        }
-
-        .btn-info {
-            background-color: rgba(109, 109, 110, 0.7);
-            color: #ffffff;
-        }
-
-        .btn-info:hover {
-            background-color: rgba(109, 109, 110, 0.4);
-            transform: scale(1.03);
-        }
-
-        /* ==========================================================================
-           5. KATALOG FILMÓW (GRID)
-           ========================================================================== */
-        .main-container {
-            padding: 0 60px 80px;
-            position: relative;
-            z-index: 10;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .section-title {
-            font-size: 1.6rem;
-            font-weight: 700;
-            border-left: 4px solid var(--primary-color);
-            padding-left: 12px;
-        }
-
-        .movie-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 25px;
-        }
-
+        /* SIATKA FILMÓW */
+        .main-container { padding: 20px 40px 60px; }
+        .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; }
+        
         .movie-card {
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: var(--transition-smooth);
-            cursor: pointer;
-            position: relative;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            background: var(--card-bg); border-radius: 10px; overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; position: relative;
         }
-
-        .movie-card:hover {
-            transform: translateY(-10px) scale(1.03);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.9);
+        .movie-card:hover { transform: translateY(-8px); box-shadow: 0 10px 20px rgba(0,0,0,0.8); }
+        .movie-card img { width: 100%; height: 280px; object-fit: cover; }
+        
+        .fav-icon {
+            position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7);
+            width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; color: #fff; transition: 0.2s;
         }
+        .fav-icon.active { color: var(--primary); }
 
-        .movie-card img {
-            width: 100%;
-            height: 320px;
-            object-fit: cover;
-            display: block;
-        }
+        .movie-info { padding: 12px; }
+        .movie-title { font-size: 0.95rem; font-weight: bold; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .movie-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; justify-content: space-between; }
 
-        .movie-info {
-            padding: 15px;
-            background: #181818;
-        }
-
-        .movie-title {
-            font-size: 1rem;
-            font-weight: 700;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-bottom: 6px;
-        }
-
-        .movie-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .rating {
-            color: #46d369;
-            font-weight: bold;
-        }
-
-        /* ==========================================================================
-           6. STOPKA (FOOTER)
-           ========================================================================== */
-        footer {
-            background-color: #0d0d0d;
-            padding: 50px 60px 30px;
-            border-top: 1px solid #222;
-            color: #757575;
-            font-size: 0.9rem;
-        }
-
-        .footer-content {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .footer-socials {
-            display: flex;
-            gap: 20px;
-            font-size: 1.4rem;
-            margin-bottom: 25px;
-        }
-
-        .footer-socials i {
-            color: #fff;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .footer-socials i:hover {
-            color: var(--primary-color);
-        }
-
-        .footer-links {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .footer-links a {
-            color: #757575;
-            text-decoration: none;
-        }
-
-        .footer-links a:hover {
-            text-decoration: underline;
-        }
-
-        .copyright {
-            margin-top: 20px;
-            font-size: 0.8rem;
-        }
-
-        /* ==========================================================================
-           7. MODAL ZWIADU (POPUP)
-           ========================================================================== */
+        /* POPUP SZEGÓŁÓW FILMU */
         .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition-smooth);
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center;
+            z-index: 2000; opacity: 0; visibility: hidden; transition: 0.3s ease;
         }
-
-        .modal.active {
-            opacity: 1;
-            visibility: visible;
+        .modal.active { opacity: 1; visibility: visible; }
+        .modal-content {
+            background: #1e1e1e; width: 90%; max-width: 700px; border-radius: 12px;
+            overflow: hidden; position: relative; padding: 25px; display: flex; flex-direction: column; gap: 15px;
         }
-
-        .modal-body {
-            background: #181818;
-            width: 90%;
-            max-width: 800px;
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 1.8rem;
-            color: #fff;
-            cursor: pointer;
-            z-index: 10;
-        }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; }
+        .modal-title { font-size: 1.8rem; color: var(--primary); }
+        .modal-desc { font-size: 0.95rem; line-height: 1.5; color: #ddd; }
     </style>
 </head>
 <body>
 
-    <!-- 1. EKRAN STARTOWY (LANDING PAGE) -->
+    <!-- 1. EKRAN STARTOWY -->
     <div id="welcome-screen">
-        <div class="brand-badge">Twoje Centrum Filmowe</div>
         <h1 class="welcome-title">STREAMFLIX</h1>
-        <p class="welcome-subtitle">Filmy, seriale i programy bez limitu.</p>
-        <p class="welcome-desc">Zanurz się w tysiącach najnowszych produkcji w najwyższej jakości HD oraz 4K.</p>
-        
-        <button class="btn-portal" onclick="enterPlatform()">
-            <span>Rozpocznij seans</span>
-            <i class="fa-solid fa-play"></i>
+        <p class="welcome-desc">Wszystkie filmy świata w jednym miejscu. Przeglądaj, szukaj, odkrywaj i twórz własną listę ulubionych kinowych hitów.</p>
+        <button class="btn-enter" onclick="enterApp()">
+            <span>Odkrywaj Filmy</span>
+            <i class="fa-solid fa-compass"></i>
         </button>
     </div>
 
-    <!-- 2. PASEK NAWIGACYJNY -->
-    <header id="navbar">
-        <div class="nav-left">
-            <a href="#" class="logo">STREAMFLIX</a>
-            <ul class="nav-links">
-                <li><a href="#" class="active">Strona główna</a></li>
-                <li><a href="#">Seriale</a></li>
-                <li><a href="#">Filmy</a></li>
-                <li><a href="#">Moja lista</a></li>
-            </ul>
-        </div>
-        <div class="nav-right">
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Szukaj filmów..." id="searchInput">
-            </div>
-            <div class="user-profile">
-                <div class="avatar"></div>
-            </div>
+    <!-- 2. NAWIGACJA -->
+    <header>
+        <a href="#" class="logo">STREAMFLIX</a>
+        <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="Szukaj tytułu..." oninput="filterMovies()">
         </div>
     </header>
 
-    <!-- 3. GLÓWNA SEKCJA (HERO) -->
-    <section class="hero">
-        <div class="hero-content">
-            <span class="hero-tag">#1 Dzisiaj w Polsce</span>
-            <h1 class="hero-title">Ostatnie Starcie</h1>
-            <p class="hero-desc">Lider grupy przestępczej próbuje wykonać ostatnie zlecenie, aby zabezpieczyć przyszłość swojej rodziny. Nie wie jednak, że ktoś z jego własnego otoczenia działa na dwa fronty.</p>
-            <div class="hero-buttons">
-                <button class="btn-action btn-play" onclick="openModal()">
-                    <i class="fa-solid fa-play"></i> Oglądaj
-                </button>
-                <button class="btn-action btn-info">
-                    <i class="fa-solid fa-circle-info"></i> Więcej informacji
-                </button>
-            </div>
+    <!-- 3. KONTROLI I GATUNKI -->
+    <section class="controls-section">
+        <div class="action-buttons">
+            <button class="btn-action active" onclick="showAllMovies(this)">
+                <i class="fa-solid fa-film"></i> Wszystkie Filmy
+            </button>
+            <button class="btn-action" onclick="getRandomMovie()">
+                <i class="fa-solid fa-dice"></i> Wylosuj Film
+            </button>
+            <button class="btn-action" onclick="showFavorites(this)">
+                <i class="fa-solid fa-heart"></i> Ulubione (<span id="favCount">0</span>)
+            </button>
+        </div>
+
+        <div class="genre-tags" id="genreContainer">
+            <span class="genre-tag active" onclick="filterGenre('Wszystkie', this)">Wszystkie</span>
+            <span class="genre-tag" onclick="filterGenre('Akcja', this)">Akcja</span>
+            <span class="genre-tag" onclick="filterGenre('Dramat', this)">Dramat</span>
+            <span class="genre-tag" onclick="filterGenre('Komedia', this)">Komedia</span>
+            <span class="genre-tag" onclick="filterGenre('Sci-Fi', this)">Sci-Fi</span>
+            <span class="genre-tag" onclick="filterGenre('Thriller', this)">Thriller</span>
         </div>
     </section>
 
-    <!-- 4. SEKCJA KATALOGU FILMÓW -->
+    <!-- 4. LISTA FILMÓW -->
     <main class="main-container">
-        <div class="section-header">
-            <h2 class="section-title">Popularne teraz w Polsce</h2>
-        </div>
-        
-        <div class="movie-grid" id="movieContainer">
-            <!-- Filmy będą dodawane automatycznie przez skrypt JS -->
-        </div>
+        <div class="movie-grid" id="movieGrid"></div>
     </main>
 
-    <!-- 5. STOPKA -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-socials">
-                <i class="fa-brands fa-facebook-f"></i>
-                <i class="fa-brands fa-instagram"></i>
-                <i class="fa-brands fa-twitter"></i>
-                <i class="fa-brands fa-youtube"></i>
-            </div>
-            <div class="footer-links">
-                <a href="#">Audio i napisy</a>
-                <a href="#">Centrum pomocy</a>
-                <a href="#">Karty podarunkowe</a>
-                <a href="#">Regulamin</a>
-                <a href="#">Prywatność</a>
-                <a href="#">Ustawienia ciasteczek</a>
-                <a href="#">Kontakt</a>
-            </div>
-            <p class="copyright">&copy; 2026 StreamFlix, Inc. Wszelkie prawa zastrzeżone.</p>
-        </div>
-    </footer>
-
-    <!-- 6. OKNO MODALNE (ODTWARZACZ) -->
-    <div class="modal" id="videoModal">
-        <div class="modal-body">
+    <!-- 5. OKNO SZCZEGÓŁÓW FILMU -->
+    <div class="modal" id="movieModal">
+        <div class="modal-content">
             <span class="close-modal" onclick="closeModal()">&times;</span>
-            <div style="padding: 40% 0 0 0; position:relative;">
-                <iframe src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <h2 class="modal-title" id="modalTitle">Tytuł Filmu</h2>
+            <p style="color: #888; font-size: 0.85rem;" id="modalGenre">Gatunek: Akcja</p>
+            <p class="modal-desc" id="modalDesc">Opis filmu...</p>
+            <div style="padding: 30% 0 0 0; position:relative; border-radius: 8px; overflow: hidden;">
+                <iframe id="modalTrailer" src="" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen></iframe>
             </div>
         </div>
     </div>
 
-    <!-- 7. SKRYPT LOGIKI -->
     <script>
-        // Efekt znikania ekranu powitalnego
-        function enterPlatform() {
-            const welcomeScreen = document.getElementById('welcome-screen');
-            welcomeScreen.classList.add('hidden');
-            loadMovies();
+        let allMovies = [];
+        let favoriteIds = [];
+        let currentGenre = 'Wszystkie';
+
+        function enterApp() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            fetchMovies();
         }
 
-        // Zmiana tła paska nawigacyjnego przy przewijaniu
-        window.addEventListener('scroll', () => {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
-
-        // Pobieranie filmów z API z obsługą ewentualnego błędu
-        async function loadMovies() {
-            const container = document.getElementById('movieContainer');
+        async function fetchMovies() {
             try {
                 const response = await fetch('/api/movies');
-                const movies = await response.json();
-                
-                container.innerHTML = '';
-                movies.forEach(movie => {
-                    const card = document.createElement('div');
-                    card.className = 'movie-card';
-                    card.onclick = openModal;
-                    card.innerHTML = `
-                        <img src="${movie.poster}" alt="${movie.title}">
-                        <div class="movie-info">
-                            <div class="movie-title">${movie.title}</div>
-                            <div class="movie-meta">
-                                <span class="rating">98% Zgodności</span>
-                                <span>16+</span>
-                            </div>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
-            } catch (error) {
-                console.log("Ładowanie zbalansowanej listy rezerwowej...");
-                // Przykładowy układ, gdyby API nie odpowiedziało natychmiast
-                container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888;">Ładowanie listy filmów...</p>`;
+                allMovies = await response.json();
+                renderMovies(allMovies);
+            } catch (err) {
+                console.error("Błąd pobierania filmów:", err);
             }
         }
 
-        // Logika okna zwiastunów
-        function openModal() {
-            document.getElementById('videoModal').classList.add('active');
+        function renderMovies(movies) {
+            const container = document.getElementById('movieGrid');
+            container.innerHTML = '';
+
+            if (movies.length === 0) {
+                container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 40px;">Brak filmów do wyświetlenia.</p>`;
+                return;
+            }
+
+            movies.forEach(movie => {
+                const isFav = favoriteIds.includes(movie.id);
+                const card = document.createElement('div');
+                card.className = 'movie-card';
+                card.innerHTML = `
+                    <div class="fav-icon ${isFav ? 'active' : ''}" onclick="toggleFav(event, ${movie.id})">
+                        <i class="fa-solid fa-heart"></i>
+                    </div>
+                    <img src="${movie.poster}" alt="${movie.title}" onclick="openMovieDetails(${movie.id})">
+                    <div class="movie-info" onclick="openMovieDetails(${movie.id})">
+                        <div class="movie-title">${movie.title}</div>
+                        <div class="movie-meta">
+                            <span>${movie.genre || 'Film'}</span>
+                            <span>⭐ ${movie.rating || '8.0'}</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function toggleFav(e, id) {
+            e.stopPropagation();
+            if (favoriteIds.includes(id)) {
+                favoriteIds = favoriteIds.filter(favId => favId !== id);
+            } else {
+                favoriteIds.push(id);
+            }
+            document.getElementById('favCount').innerText = favoriteIds.length;
+            filterMovies();
+        }
+
+        function filterGenre(genre, element) {
+            currentGenre = genre;
+            document.querySelectorAll('.genre-tag').forEach(tag => tag.classList.remove('active'));
+            element.classList.add('active');
+            filterMovies();
+        }
+
+        function filterMovies() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allMovies.filter(m => {
+                const matchesSearch = m.title.toLowerCase().includes(query);
+                const matchesGenre = currentGenre === 'Wszystkie' || (m.genre && m.genre.includes(currentGenre));
+                return matchesSearch && matchesGenre;
+            });
+            renderMovies(filtered);
+        }
+
+        function showFavorites(btn) {
+            setActiveButton(btn);
+            const favMovies = allMovies.filter(m => favoriteIds.includes(m.id));
+            renderMovies(favMovies);
+        }
+
+        function showAllMovies(btn) {
+            setActiveButton(btn);
+            filterMovies();
+        }
+
+        function getRandomMovie() {
+            if (allMovies.length === 0) return;
+            const random = allMovies[Math.floor(Math.random() * allMovies.length)];
+            openMovieDetails(random.id);
+        }
+
+        function openMovieDetails(id) {
+            const movie = allMovies.find(m => m.id === id);
+            if (!movie) return;
+
+            document.getElementById('modalTitle').innerText = movie.title;
+            document.getElementById('modalGenre').innerText = 'Gatunek: ' + (movie.genre || 'Ogólny');
+            document.getElementById('modalDesc').innerText = movie.description || 'Świetna produkcja kinowa. Zobacz oficjalny zwiastun poniżej.';
+            document.getElementById('modalTrailer').src = movie.trailer || "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ";
+
+            document.getElementById('movieModal').classList.add('active');
         }
 
         function closeModal() {
-            document.getElementById('videoModal').classList.remove('active');
+            document.getElementById('modalTrailer').src = "";
+            document.getElementById('movieModal').classList.remove('active');
+        }
+
+        function setActiveButton(btn) {
+            document.querySelectorAll('.action-buttons .btn-action').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
         }
     </script>
 </body>
